@@ -15,7 +15,7 @@ They do basically the same thing:
   - This way I could add additional rules/processing later on depending on what port it is
   - This assumes a particular Solace router is designated as prod, test, or dev.  Maybe change to prod/non-prod?
 - Ability to process all 3 log facilities arriving from Solace, but does some filtering
-  - `system.log`: this is essentially left alone, but I think this log is dumb as it's a subset of `event.log`
+  - <pre>system.log</pre>: this is essentially left alone, but I think this log is dumb as it's a subset of `event.log`
   - `command.log`: all the commands, but filtering out all the 'show' commands 
 (which can be exported to command via the CLI command `en --> con --> logging command all mode all`.
 Very useful for watching SEMP monitoring polling rate.
