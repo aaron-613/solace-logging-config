@@ -1,0 +1,66 @@
+# Aaron's logrotate configuration file
+# will keep appliance logs blah blah description
+# new comment
+
+/var/log/solace*/*/command.log {
+        size=50M
+        rotate 2
+        missingok
+        compress
+        delaycompress
+        create 644 root root
+        sharedscripts
+        postrotate
+          /bin/killall -HUP rsyslogd
+        endscript
+}
+/var/log/solace*/*/event.log {
+        size=100M
+        rotate 5
+        missingok
+        compress
+        delaycompress
+        create 644 root root
+        sharedscripts
+        postrotate
+          /bin/killall -HUP rsyslogd
+        endscript
+}
+/var/log/solace*/*/auth.log {
+        size=10M
+        rotate 2
+        missingok
+        compress
+        delaycompress
+        create 644 root root
+        sharedscripts
+        postrotate
+          /bin/killall -HUP rsyslogd
+        endscript
+}
+/var/log/solace*/*/show.log {
+        size=30k
+        rotate 2
+        missingok
+        compress
+        delaycompress
+        create 644 root root
+        sharedscripts
+        postrotate
+          /bin/killall -HUP rsyslogd
+        endscript
+}
+
+# This will be for the alerts log
+/var/log/solace*/alerts.log {
+        size=20M
+        rotate 2
+        missingok
+        compress
+        delaycompress
+        create 644 root root
+        sharedscripts
+        postrotate
+          /bin/killall -HUP rsyslogd
+        endscript
+}
