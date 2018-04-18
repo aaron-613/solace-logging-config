@@ -4,7 +4,7 @@
 
 /var/log/solace*/router*/command.log {
         size=50M
-        rotate 2
+        rotate 5
         missingok
         compress
         delaycompress
@@ -30,7 +30,7 @@
 }
 /var/log/solace*/router*/system.log {
         size=50M
-        rotate 5
+        rotate 2 
         missingok
         compress
         delaycompress
