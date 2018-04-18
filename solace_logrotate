@@ -2,7 +2,7 @@
 # will keep appliance logs blah blah description
 # new comment
 
-/var/log/solace*/*/command.log {
+/var/log/solace*/router*/command.log {
         size=50M
         rotate 2
         missingok
@@ -12,10 +12,24 @@
         sharedscripts
         postrotate
           /bin/killall -HUP rsyslogd
+          /bin/killall -HUP syslog-ng
         endscript
 }
-/var/log/solace*/*/event.log {
+/var/log/solace*/router*/event.log {
         size=100M
+        rotate 10
+        missingok
+        compress
+        delaycompress
+        create 644 root root
+        sharedscripts
+        postrotate
+          /bin/killall -HUP rsyslogd
+          /bin/killall -HUP syslog-ng
+        endscript
+}
+/var/log/solace*/router*/system.log {
+        size=50M
         rotate 5
         missingok
         compress
@@ -24,9 +38,10 @@
         sharedscripts
         postrotate
           /bin/killall -HUP rsyslogd
+          /bin/killall -HUP syslog-ng
         endscript
 }
-/var/log/solace*/*/auth.log {
+/var/log/solace*/router*/auth.log {
         size=10M
         rotate 2
         missingok
@@ -36,10 +51,24 @@
         sharedscripts
         postrotate
           /bin/killall -HUP rsyslogd
+          /bin/killall -HUP syslog-ng
         endscript
 }
-/var/log/solace*/*/show.log {
+/var/log/solace*/router*/show.log {
         size=30k
+        rotate 5
+        missingok
+        compress
+        delaycompress
+        create 644 root root
+        sharedscripts
+        postrotate
+          /bin/killall -HUP rsyslogd
+          /bin/killall -HUP syslog-ng
+        endscript
+}
+/var/log/solace*/router*/vpn*/event.log {
+        size=5M
         rotate 2
         missingok
         compress
@@ -48,6 +77,7 @@
         sharedscripts
         postrotate
           /bin/killall -HUP rsyslogd
+          /bin/killall -HUP syslog-ng
         endscript
 }
 
@@ -62,5 +92,6 @@
         sharedscripts
         postrotate
           /bin/killall -HUP rsyslogd
+          /bin/killall -HUP syslog-ng
         endscript
 }
