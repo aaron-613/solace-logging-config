@@ -31,3 +31,22 @@ be watched by a monitoring program, rather than having the monitoring program tr
 
 I've also included an example logrotate configuration file, and a crontab entry to check every 2 minutes if the logs need rotating.
 
+## Directory contents
+
+This is what a particular router's directory would look like:
+
+```[alee@sg-sol-3501-host router_sg-sol-3501-vmr]$ ls -lh
+total 15M
+-rw-r--r--. 1 root root  77K Apr 19 01:50 auth.log
+-rw-r--r--. 1 root root 9.7M Apr 19 00:55 command.log
+-rw-r--r--. 1 root root 3.1M Apr 19 01:50 event.log
+-rw-r--r--. 1 root root  79K Apr 19 01:51 show.log
+-rw-r--r--. 1 root root 1.1M Apr 19 01:48 show.log.1
+-rw-r--r--. 1 root root 2.2K Apr 19 01:06 show.log.2.gz
+-rw-r--r--. 1 root root 2.2K Apr 19 01:04 show.log.3.gz
+-rw-r--r--. 1 root root  22K Apr 19 00:55 system.log
+drwxr-xr-x. 2 root root   23 Apr 18 19:47 vpn.bw
+drwxr-xr-x. 2 root root   23 Apr 18 19:47 vpn.default
+drwxr-xr-x. 2 root root   23 Apr 19 00:46 vpn.rest
+[alee@sg-sol-3501-host router_sg-sol-3501-vmr]$
+```
