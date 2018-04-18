@@ -2,13 +2,16 @@
 
 This is a collection of logging configuration files for use with Solace messaging routers.  Currently includes:
 
-- rsyslog
-- syslog-ng
-- logstash grok (ELK / ElasticSearch)
- 
-_These are very much WIP, and meant to give a Solace administrator a head-start on configuration._
+- rsyslog rules
+- syslog-ng rules
+- logstash grok rules (ELK / ElasticSearch)
+- logrotate configuration
+- crontab logrotate example
+- (coming soon) SEC (Simple Event Correlator) log correlation rules
 
-The logstash grok rules are still really rough, but the rsyslog and syslog-ng rules are fairly complete.
+ 
+_These are very much WIP, and meant to give a Solace administrator a head-start on configuration._ The logstash grok rules are still really rough, but the rsyslog and syslog-ng rules are fairly complete.
+
 They do basically the same thing:
 
 - Listen on 3 different inbound TCP ports, one for dev, test, and prod (e.g. 51400, 51401, 51402 respectively)
