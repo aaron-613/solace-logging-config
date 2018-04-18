@@ -1,6 +1,6 @@
-*/5 * * * * /usr/sbin/logrotate /etc/logrotate.d/solace_logrotate
+*/2 * * * * /usr/sbin/logrotate /etc/logrotate.d/solace_logrotate
 
  -- or --
 
-*/5 * * * * /sbin/logrotate /etc/logrotate.d/solace_logrotate
+*/2 * * * * /sbin/logrotate /etc/logrotate.d/solace_logrotate
 

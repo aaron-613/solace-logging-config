@@ -55,7 +55,7 @@
         endscript
 }
 /var/log/solace*/router*/show.log {
-        size=30k
+        size=1M
         rotate 5
         missingok
         compress
