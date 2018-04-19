@@ -30,7 +30,7 @@
 }
 /var/log/solace*/router*/system.log {
         size=50M
-        rotate 2 
+        rotate 3
         missingok
         compress
         delaycompress
@@ -43,7 +43,7 @@
 }
 /var/log/solace*/router*/auth.log {
         size=10M
-        rotate 2
+        rotate 3
         missingok
         compress
         delaycompress
@@ -55,8 +55,8 @@
         endscript
 }
 /var/log/solace*/router*/show.log {
-        size=1M
-        rotate 5
+        size=10M
+        rotate 3
         missingok
         compress
         delaycompress
@@ -69,7 +69,7 @@
 }
 /var/log/solace*/router*/vpn*/event.log {
         size=5M
-        rotate 2
+        rotate 3
         missingok
         compress
         delaycompress
