@@ -51,5 +51,5 @@ total 15M
 drwxr-xr-x. 2 root root   23 Apr 18 19:47 vpn.bw
 drwxr-xr-x. 2 root root   23 Apr 18 19:47 vpn.default
 drwxr-xr-x. 2 root root   23 Apr 19 00:46 vpn.rest
-[alee@sg-sol-3501-host router_sg-sol-3501-vmr]$
+[alee@sg-sol-3501-host router.sg-sol-3501-vmr]$
 ```
