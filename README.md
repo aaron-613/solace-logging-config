@@ -38,7 +38,8 @@ I've also included an example logrotate configuration file, and a crontab entry 
 
 This is what a particular router's directory would look like:
 
-```[alee@sg-sol-3501-host router.sg-sol-3501-vmr]$ ls -lh
+```
+[alee@sg-sol-3501-host router.sg-sol-3501-vmr]$ ls -lh
 total 15M
 -rw-r--r--. 1 root root  77K Apr 19 01:50 auth.log
 -rw-r--r--. 1 root root 9.7M Apr 19 00:55 command.log
