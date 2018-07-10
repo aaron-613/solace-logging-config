@@ -80,8 +80,6 @@
           /bin/killall -HUP syslog-ng
         endscript
 }
-
-# This will be for the alerts log
 /var/log/solace*/alerts.log {
         size=20M
         rotate 2
