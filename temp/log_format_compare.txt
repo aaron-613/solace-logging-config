@@ -1,0 +1,24 @@
+Original logs, in order: VMR, rsyslog, syslog-ng
+2017-10-26T16:51:58+0800 <local1.info> sg-sol-3501-vmr alee[6499]: CLI/1        ::1              alee              16:51:58  16:51:58  ok                              (configure/syslog)# exit
+2017-10-26T16:52:00+0800 <local1.info> sg-sol-3501-vmr alee[6499]: CLI/1        ::1              alee              16:52:00  16:52:00  ok                              (configure)# exit
+2017-10-26T16:51:58+08: sg-sol-3501-vmr alee[6499]: CLI/1        ::1              alee              16:51:58  16:51:58  ok                              (configure/syslog)# exit
+2017-10-26T16:52:00+08: sg-sol-3501-vmr alee[6499]: CLI/1        ::1              alee              16:52:00  16:52:00  ok                              (configure)# exit
+2017-10-26T16:51:58.000+08:00 sg-sol-3501-vmr alee: CLI/1        ::1              alee              16:51:58  16:51:58  ok                              (configure/syslog)# exit
+2017-10-26T16:52:00.000+08:00 sg-sol-3501-vmr alee: CLI/1        ::1              alee              16:52:00  16:52:00  ok                              (configure)# exit
+
+
+VMR
+2017-10-26T16:51:58+0800 <local1.info> sg-sol-3501-vmr alee[6499]: CLI/1        ::1              alee              16:51:58  16:51:58  ok                              (configure/syslog)# exit
+2017-10-26T16:52:00+0800 <local1.info> sg-sol-3501-vmr alee[6499]: CLI/1        ::1              alee              16:52:00  16:52:00  ok                              (configure)# exit
+
+RSyslog
+2017-10-26T16:51:58+08:       sg-sol-3501-vmr alee[6499]: CLI/1        ::1              alee              16:51:58  16:51:58  ok                              (configure/syslog)# exit
+2017-10-26T16:52:00+08:       sg-sol-3501-vmr alee[6499]: CLI/1        ::1              alee              16:52:00  16:52:00  ok                              (configure)# exit
+                   vvvv    vv                     ^^^^^^
+2017-10-26T16:51:58.000+08:00 sg-sol-3501-vmr alee:       CLI/1        ::1              alee              16:51:58  16:51:58  ok                              (configure/syslog)# exit
+2017-10-26T16:52:00.000+08:00 sg-sol-3501-vmr alee:       CLI/1        ::1              alee              16:52:00  16:52:00  ok                              (configure)# exit
+Syslog-NG
+
+Syslog-NG has slightly different timestamp
+
+

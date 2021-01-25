@@ -1,0 +1,100 @@
+
+# Start here!
+
+# Aaron's SEC (Simple Event Correlator) rules for effecitively managing/monitoring a Solace estate
+# This file requires sec to be installed, which is part of epel (exteneded Linux packages).  Also requires Perl
+# SEC is great for doing pre-processing of the raw log files, before the monitoring program reads the events.
+# Things you can do include:
+#  - watch for a particular event, emit once and supress for some period of time (e.g. discards, flapping ports)
+#  - watch for a particular event and if a corresponding event doesn't arrive within a period of time, emit (e.g. cache down/up)
+#  - if more than n events arrive in the period of m seconds, generate an event (e.g. multiple login attempts)
+#  - 
+
+
+# Build an context that starts at 11pm on Friday and lasts until 11pm Sunday night
+# This is used to determine if an event should be alerted on or not
+#type=Calendar
+#time=0 23 * * 5
+#desc=WEEKEND_SUPPRESS
+#action=create %s 172800
+
+# Load the PERL module with helper functions
+type=Single
+ptype=SubStr
+pattern=SEC_STARTUP
+context=SEC_INTERNAL_EVENT
+desc=Load the SecSolaceRoutines module
+action=assign %a "hello"; logonly -- hi %a ; eval %return_code (require './solace_sec_perl.pm'); if %return_code ( none ) else ( eval %return_code exit(1) ) ; \
+
+
+#type=Single
+#ptype=SubStr
+#pattern=SEC_STARTUP
+#context=SEC_INTERNAL_EVENT 
+#desc=Testle
+#action=logonly alksdjflkdsajflkajdsfl jlkds jflkdsaj flk jsaf
+
+
+    
+# Note: a lot of the rules below have both 'appliance' and 'cluster' in the regex.  The cluster matches on the first 11 chars of the appliance name.
+#       This allows events from both ldnpsol1002n01 and ldnpsol1002n02, or ldnpsol0032 and ldnpsol0032b to be matched, as the first 11 chars are the same.
+
+
+
+####################################################
+##  EGRESS DISCARD, WITH SUPPRESSION FOR 8 HOURS  ##
+####################################################
+
+# The following event will watch for egress discards (we will only watch SW and VPN bridge clients), and then create a supression event for 8 hours
+
+# EXAMPLE:
+# Oct  1 11:25:34 ldnpsol0030 SOLACLldnSOLACINFO: CLIENT: CLIENT_CLIENT_EGRESS_MSG_DISCARD: solmwm pingerconnection1 Client (4994) pingerconnection1 username solmwm, connected to 10.65.141.37:55555 from 10.70.69.2:60149
+
+#type=SingleWithSuppress
+#continue=TakeNext
+#ptype=RegExp
+#pattern=(?<appliance>\S+) \S+ CLIENT: CLIENT_CLIENT_EGRESS_MSG_DISCARD: (?<vpn>\S+) (?<clientname>\S+)
+#desc=Egress discard log for '$+{clientname}' in VPN '$+{vpn}' on '$+{appliance}'
+#window=28800
+#action=logonly >> %t >> DETECTED >> %s -- SUPPRESSING for 8 hours ; \
+#       write /usr/bin/sol/logs/messages/sec_correlate.out.log $0 -- Supressing for 8 hours
+
+
+
+#########################################################
+##  LOST LOGGING EVENTS, WITH SUPPRESSION FOR 8 HOURS  ##
+#########################################################
+#
+## The following event will watch for lost logging events coming from a particular appliance, and then create a supression event for 1 hour
+#
+## EXAMPLE:
+## 2013-11-26T10:58:57+00:00 ldnpsol1010n01 SOLACLldnSOLACWARN: SYSTEM: SYSTEM_LOGGING_LOST_EVENTS: - - 1 events lost reason(Out of Resources)
+#
+#type=SingleWithSuppress
+#continue=TakeNext
+#ptype=RegExp
+#pattern=(?<appliance>\S+) \S+ SYSTEM: SYSTEM_LOGGING_LOST_EVENTS:
+#desc=Appliance '$+{appliance}' is experiencing some very verbose logging!
+#window=3600
+#action=logonly >> %t >> DETECTED >> %s -- SUPPRESSING for 1 hour ; \
+#       write /tmp/correlate.out.log $0 -- Supressing for 1 hour
+
+
+
+# maybe this should be a threshold of at least 3 attempts?
+
+#2018-04-19T02:15:30.000+08:00 <notice> sgdemo1 SOLSG1NOTI: SYSTEM: SYSTEM_AUTHENTICATION_SESSION_DENIED: - - Denied SEMP session 54.219.186.38 internal authentication for admin (admin)
+#
+type=SingleWithSuppress
+continue=TakeNext
+ptype=RegExp
+pattern=(?<appliance>\S+) \S+ SYSTEM: SYSTEM_AUTHENTICATION_SESSION_DENIED: .* Denied .*? session (?<ip>[0-9.]+) .*? authentication for (?<user>.*)
+desc=Someone from IP '$+{ip}' is trying to log into appliance '$+{appliance}' with username '$+{user}'!
+window=60
+action=logonly >> %t >> DETECTED >> %s %p -- SUPPRESSING for 1 hour ; \
+       write /var/log/solace_syslog-ng/correlate.out.log $0 -- Supressing for 1 hour
+
+
+
+
+

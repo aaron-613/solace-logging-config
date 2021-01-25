@@ -1,0 +1,302 @@
+
+# Start here!
+
+
+# Build an context that starts at 11pm on Friday and lasts until 11pm Sunday night
+# This is used to determine if an event should be alerted on or not
+type=Calendar
+time=0 23 * * 5
+desc=WEEKEND_SUPPRESS
+action=create %s 172800
+
+
+
+# Load the PERL module with helper functions
+type=Single
+ptype=SubStr
+pattern=SEC_STARTUP
+context=SEC_INTERNAL_EVENT
+desc=Load the SecSolaceRoutines module
+action=eval %return_code (require '/usr/bin/sol/sec/control/SecSolaceRoutines.pm'); if %return_code ( none ) else ( eval %return_code exit(1) )
+
+
+
+# Note: a lot of the rules below have both 'appliance' and 'cluster' in the regex.  The cluster matches on the first 11 chars of the appliance name.
+#       This allows events from both ldnpsol1002n01 and ldnpsol1002n02, or ldnpsol0032 and ldnpsol0032b to be matched, as the first 11 chars are the same.
+
+
+
+####################################################
+##  EGRESS DISCARD, WITH SUPPRESSION FOR 8 HOURS  ##
+####################################################
+
+# The following event will watch for egress discards (we will only watch SW and VPN bridge clients), and then create a supression event for 8 hours
+
+# EXAMPLE:
+# Oct  1 11:25:34 ldnpsol0030 SOLACLldnSOLACINFO: CLIENT: CLIENT_CLIENT_EGRESS_MSG_DISCARD: solmwm pingerconnection1 Client (4994) pingerconnection1 username solmwm, connected to 10.65.141.37:55555 from 10.70.69.2:60149
+
+type=SingleWithSuppress
+continue=TakeNext
+ptype=RegExp
+pattern=(?<appliance>\S+) \S+ CLIENT: CLIENT_CLIENT_EGRESS_MSG_DISCARD: (?<vpn>\S+) (?<clientname>\S+)
+desc=Egress discard log for '$+{clientname}' in VPN '$+{vpn}' on '$+{appliance}'
+window=28800
+action=logonly >> %t >> DETECTED >> %s -- SUPPRESSING for 8 hours ; \
+       write /usr/bin/sol/logs/messages/sec_correlate.out.log $0 -- Supressing for 8 hours
+
+
+
+#########################################################
+##  LOST LOGGING EVENTS, WITH SUPPRESSION FOR 8 HOURS  ##
+#########################################################
+#
+## The following event will watch for lost logging events coming from a particular appliance, and then create a supression event for 1 hour
+#
+## EXAMPLE:
+## 2013-11-26T10:58:57+00:00 ldnpsol1010n01 SOLACLldnSOLACWARN: SYSTEM: SYSTEM_LOGGING_LOST_EVENTS: - - 1 events lost reason(Out of Resources)
+#
+type=SingleWithSuppress
+continue=TakeNext
+ptype=RegExp
+pattern=(?<appliance>\S+) \S+ SYSTEM: SYSTEM_LOGGING_LOST_EVENTS:
+desc=Appliance '$+{appliance}' is experiencing some very verbose logging!
+window=3600
+action=logonly >> %t >> DETECTED >> %s -- SUPPRESSING for 1 hour ; \
+       write /usr/bin/sol/logs/messages/sec_correlate.out.log $0 -- Supressing for 1 hour
+
+
+
+
+############################################
+##  BRIDGE DISCONNECTS, WITH AGGREGATION  ##
+############################################
+
+# The following rules looks for bridge disconnects (only hsbridge and ss2solgw client disconnects get sent to the input file), VPN bridge link downs
+# and CSPF neighbour link down events.
+# The action creates a 35-second context that will report this DISCONNECT unless a RECONNECT occurs (see farther below), or a 'SUPPRESS' context is present
+# It then adds the shortened DISCONNECT log details using the Perl routine to keep track in case there's a WAN flap occurring
+
+# EXAMPLES:
+#Oct 25 16:54:21 ldnpsol0006 SOLDVTLDNSOLDVWARN: CLIENT: CLIENT_CLIENT_DISCONNECT: sws_ldn_uat swsdt_ldn_uat/solmwm/ss2solgw/pub/ss2solgw_fiet_ldn_uat-sol__to__sws_ldn_uat-sol Client (4341) swsdt_ldn_uat/solmwm/ss2solgw/pub/ss2solgw_fiet_ldn_uat-sol__to__sws_ldn_uat-sol username solmwm WebSessionId (N/A) reason(Peer TCP Closed) final statistics - dp(9, 6, 13, 12, 22, 18, 966, 808, 1938, 1504, 2904, 2312, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0) conn(0, 0, 10.69.10.63:58074, CLSWT, 0, 0, 0) zip(0, 0, 0, 0, 0.00, 0.00, 0, 0, 0, 0, 0, 0, 0, 0) web(0, 0, 0, 0, 0, 0, 0), SslVersion(), SslCipher()
+
+#Oct 25 23:05:25 ldnpsol0014 SOLDVTLDNSOLDVWARN: VPN: VPN_BRIDGING_LINK_DOWN: invsol_ldn_uat - Message VPN (15) invsol_ldn_uat Bridge exoticsn_nyk_uat_to_invsol_ldn_uat from v:nykpsol0012 VPN exoticsn_nyk_uat down: Connect Timeout
+
+#2013-10-25T16:03:43+0900 <local3.warning> tkypsol0001-admin SOLACLtkySOLACWARN: SYSTEM: SYSTEM_ROUTING_CSPF_NBR_DOWN: - - CSPF Neighbour 10.55.169.35:55555 changed from Handshake Complete to Failed due to: ConnectChange
+
+type=Single
+ptype=PerlFunc
+context=[!WEEKEND_SUPPRESS]
+pattern=sub { \
+    if ($_[0] =~ /(?<appliance>(?<cluster>\S{11})\S*) (?<tag>\S+) CLIENT: CLIENT_CLIENT_DISCONNECT: (?<vpn_or_cspf>\S+) (?<bridgename>\S+)/ || \
+        $_[0] =~ /(?<appliance>(?<cluster>\S{11})\S*) (?<tag>\S+) VPN: VPN_BRIDGING_LINK_DOWN: (?<vpn_or_cspf>\S+) - Message VPN \(\d+\) \S+ Bridge (?<bridgename>\S+)/ || \
+        $_[0] =~ /(?<appliance>(?<cluster>\S{11})\S*) (?<tag>\S+) SYSTEM: SYSTEM_ROUTING_CSPF_NBR_DOWN: - - (?<vpn_or_cspf>CSPF Neighbour) (?<bridgename>[\d.:]+)/) { \
+            return ($+{tag},$+{cluster},$+{appliance},$+{vpn_or_cspf},$+{bridgename}); \
+    } \
+    return 0; }
+varmap=BRIDGE_DISCONNECT_VARMAP; tag=1; cluster=2; appliance=3; vpn=4; bridgename=5
+desc=DISCONNECT - Bridge '$+{bridgename}' in VPN '$+{vpn}' on '$+{appliance}'
+action=logonly >> %t >> DETECTED >> %s ; \
+       create BRIDGE_DISCONNECT_ALERT__$+{cluster}__$+{vpn}__$+{bridgename} 35 ( \
+           exists %mass_suppress_exists MASS_DISCONNECT_SUPPRESS ; \
+           if %mass_suppress_exists ( logonly >> %t >> SUPPRESSING >> %s ) \
+           else ( \
+               logonly >> %t >> EMITTING >> %s ; \
+               write /usr/bin/sol/logs/messages/sec_correlate.out.log $0 ; \
+               eval %o_deleted_log (SecSolaceRoutines::delete_disconnect_log("$+{cluster}","$+{vpn}","$+{bridgename}"); ); \
+           ) \
+       ) ; \
+       eval %o_added_log ( SecSolaceRoutines::add_disconnect_log("$+{tag}","$+{cluster}","$+{appliance}","$+{vpn}","$+{bridgename}"); );  \
+       event EVENT_COUNT_BRIDGE_DISCONNECT ;
+
+
+# This rule simply cleans up old disconnect logs if no disconnect events hav been received in the time specified by threshold2
+# I.e. if 0 EVENT_COUNT_BRIDGE_DISCONNECT synthetic events have been generated in 2 minutes, call the Perl function to clean up all old disconnect logs
+type=SingleWith2Thresholds
+ptype=SUbStr
+pattern=EVENT_COUNT_BRIDGE_DISCONNECT
+continue=TakeNext
+desc=delete logs event received - starting timer
+action=none
+thresh=1
+window=1
+desc2=deleting logs now
+action2=eval %o_cleaned_up_logs ( SecSolaceRoutines::cleanup_disconnect_logs() )
+window2=121
+thresh2=0
+
+
+
+# Gets called by the synthetic event EVENT_COUNT_BRIDGE_DISCONNECT when a disconnect occurs, but uses the threshold feature to detect 3 disconnects within 15 seconds
+# If so, it creates an 'alert' context for 15 seconds in the future where it will generate a single alert for all logs stored in the Perl code disconnect hash.
+# It also creates a 'suppress' context that last 2 minutes that doesn't allow individual bridge logs to be emitted (from rule above)... at the end of the 2 minutes,
+# it will report if any other disconnect logs had been suppressed.
+type=SingleWithThreshold
+ptype=SubStr
+pattern=EVENT_COUNT_BRIDGE_DISCONNECT
+context=[!WEEKEND_SUPPRESS]
+desc=MULTIPLE BRIDGE DISCONNECTS OCCURING
+thresh=3
+window=15
+action=logonly >> %t >> DETECTED >> %s - threshold passed ; \
+       create MASS_DISCONNECT_ALERT 15 ( \
+           eval %mass_log_event ( SecSolaceRoutines::build_mass_disconnect_log("** MULTIPLE BRIDGE DISCONNECTS OCCURING ** Check SOD pages"); ); \
+           write /usr/bin/sol/logs/messages/sec_correlate.out.log %mass_log_event ; \
+       ); \
+       create MASS_DISCONNECT_SUPPRESS 120 ( \
+           eval %mass_log_event ( SecSolaceRoutines::build_mass_disconnect_log("FYI: Disconnect Suppression ending"); ); \
+           if %mass_log_event (write /usr/bin/sol/logs/messages/sec_correlate.out.log %mass_log_event ); \
+       );
+
+
+
+# This one watches for SW bridge connect events, bridge link up events, or CSPF Neighbor UP and removes the corresponding disconnect context (if it exists)
+type=Single
+ptype=PerlFunc
+pattern=sub { \
+    if ($_[0] =~ /(?<appliance>(?<cluster>\S{11})\S*) (?<tag>\S+) CLIENT: CLIENT_CLIENT_(?:CONNECT|NAME_CHANGE): (?<vpn_or_cspf>\S+) (?<bridgename>\S+)/ || \
+        $_[0] =~ /(?<appliance>(?<cluster>\S{11})\S*) (?<tag>\S+) VPN: VPN_BRIDGING_LINK_UP: (?<vpn_or_cspf>\S+) - Message VPN \(\d+\) \S+ Bridge (?<bridgename>\S+)/ || \
+        $_[0] =~ /(?<appliance>(?<cluster>\S{11})\S*) (?<tag>\S+) SYSTEM: SYSTEM_ROUTING_CSPF_NBR_UP: - - (?<vpn_or_cspf>CSPF Neighbour) (?<bridgename>[\d.:]+)/) { \
+        return ($+{tag},$+{cluster},$+{appliance},$+{vpn_or_cspf},$+{bridgename}); \
+    } \
+    return 0; }
+varmap=BRIDGE_CONNECT_VARMAP; tag=1; cluster=2; appliance=3; vpn=4; bridgename=5
+context=!WEEKEND_SUPPRESS && BRIDGE_DISCONNECT_ALERT__$+{cluster}__$+{vpn}__$+{bridgename}
+desc=CONNECT - Bridge '$+{bridgename}' in VPN '$+{vpn}' on '$+{appliance}'
+action=delete BRIDGE_DISCONNECT_ALERT__$+{cluster}__$+{vpn}__$+{bridgename}; \
+       eval %o_update_log ( SecSolaceRoutines::update_disconnect_log("$+{cluster}","$+{appliance}","$+{vpn}","$+{bridgename}"); );  \
+       logonly >> %t >> %s ; \
+       event EVENT_SUPPRESSED_BRIDGE_FLAP $+{tag} $+{appliance} $+{vpn} $+{bridgename};
+
+
+
+# If a bridge flaps 3 times in 2 hours, then a warn log is generated and further flap logs will be suppressed for 8 hours
+type=SingleWithThreshold
+ptype=RegExp
+pattern=EVENT_SUPPRESSED_BRIDGE_FLAP (?<tag>\S+) (?<appliance>(?<cluster>\S{11})\S*) (?<vpn>\S+) (?<bridgename>\S+)
+context=!WEEKEND_SUPPRESS && !BRIDGE_FLAP_SUPPRESS__$+{cluster}__$+{vpn}__$+{bridgename}
+window=7200
+thresh=3
+desc=Bridge '$+{bridgename}' in VPN '$+{vpn}' on '$+{cluster}' is flapping
+action=eval %flapping_log_event ( SecSolaceRoutines::build_bridge_flap_log("$+{tag}","+{cluster}","$+{appliance}","$+{vpn}","$+{bridgename}"); );  \
+       write /usr/bin/sol/logs/messages/sec_correlate.out.log %flapping_log_event ; \
+       create BRIDGE_FLAP_SUPPRESS__$+{cluster}__$+{vpn}__$+{bridgename} 28800
+
+
+
+
+
+
+####################################################################
+###  SYSTEM ALERTS, MORE THAN 2 FROM THE SAME CLUSTER IN 10 SECS  ##
+####################################################################
+
+# TBD
+
+
+
+
+
+
+#######################################################################
+##  CACHE LOST MESSAGE STATE - SUPPRESSED IF CLEAR RECEIVED QUICKLY  ##
+##                              - 60 seconds on weekdays             ##
+#######################################################################
+
+# The regex will first look to see if this is a LOST_MSG_STATE. (Note that PerlFunc6 = last 6 lines of input, with [5] being the last line... the one we're matching on)
+# If so, it saves those matches to internal variables, and then loops backwards through the other 5 log lines to fina a corresponding VPN_SOLCACHE_ event
+# that is not a LOST_MSG_STATE and that has the same / matching cache name.  If found, it uses that as the reason to augment the log
+# If a corresponding CLEAR event is received within 60 seconds, the event is suppressed.
+
+# EXAMPLES:
+# Oct 23 15:18:44 ldnpsol1002n01 SOLDVTLDNSOLDVINFO: VPN: VPN_SOLCACHE_MAX_MEMORY_EXCEED: aaron - Cache Instance (0) aaron_cl1_r1 Maximum memory (128 MB) exceeded, message discarded
+# Oct  7 17:29:20 ldnpsol1021n01 SOLDVTLDNMARS_WARN: VPN: VPN_SOLCACHE_LOST_MSG_STATE: marssra_ldn_dev - Cache Instance (1) marssra_ldn_dev_cl1_r1 Connection lost or message discarded, message lost state set
+
+type=PairWithWindow
+ptype=PerlFunc6
+continue=TakeNext
+context=[!WEEKEND_SUPPRESS]
+pattern=sub { \
+    if ($_[5] =~ /(?<full_log>.* (?<appliance>\S+) \S+ VPN: VPN_SOLCACHE_LOST_MSG_STATE: (?<vpn>\S+) - Cache Instance \(\d+\) (?<cachename>\S+).*)/) { \
+        $full_log = $+{full_log}; \
+        $appliance = $+{appliance}; \
+        $vpn = $+{vpn}; \
+        $cachename = $+{cachename}; \
+        for ($i = 4; $i >= 0; $i--) { \
+            if ($_[$i] =~ /(?<reason>VPN_SOLCACHE_(?!STATE_CHANGE).*? $cachename .*)/) { \
+                if ($+{reason} =~ /LOST_MSG_STATE_CLEAR:/) { \
+                    $full_log .= " -- Last clear attempt failed. SolCache Instance probably at MAX_MEMORY or MAX_TOPICS"; \ 
+                } else { \
+                    $full_log .= " -- Due to: $+{reason}"; \
+                } \
+                last; \
+            } \
+        } \
+        return ($appliance,$vpn,$cachename,$full_log); \
+    } \
+    return; }
+varmap=LOST_MSG; appliance=1; vpn=2; cachename=3; full_log=4
+desc=SolCache instance '$+{cachename}' went into loss in VPN '$+{vpn}' on '$+{appliance}'
+action=logonly >> %t >> DETECTED >> %s ; \
+       exists %lost_msg_state_suppress SOLCACHE_LOST_MSG_SUPPRESS__$+{appliance} ; \
+       if %lost_msg_state_suppress ( none ) else ( write /usr/bin/sol/logs/messages/sec_correlate.out.log $+{full_log} );
+ptype2=RegExp
+pattern2=$+{appliance} \S+ VPN: VPN_SOLCACHE_LOST_MSG_STATE_CLEAR: $+{vpn} - Cache Instance \(\d+\) $+{cachename}
+desc2=Cache instance '%+{cachename}' VPN '%+{vpn}' on '%+{appliance}' came out of loss within 60 seconds
+action2=logonly >> %t >> SUPPRESSING >> %s
+window=60
+
+
+# This will also track LOST_MSG_STATE: events, and build a supression window for 2 minutes if more than 5 are received from the same appliance in 15 seconds.
+# This should only occur during a failover, or a very large cache (eT) loses an entire cache host
+type=SingleWithThreshold
+ptype=RegExp
+context=[!WEEKEND_SUPPRESS]
+pattern=(?<appliance>\S+) (?<tag>\S+) VPN: VPN_SOLCACHE_LOST_MSG_STATE:
+desc=** MULTIPLE SOLCACHES HAVE ENTERED LOST_MESSAGE_STATE ON $+{appliance} **
+window=15
+thresh=5
+action=create SOLCACHE_LOST_MSG_SUPPRESS__$+{appliance} 90 ; \
+       create MASS_SOLCACHE_ALERT 15 ( \
+           eval %timestamp ( SecSolaceRoutines::get_nimbus_friendly_timestamp(); ); \
+           write /usr/bin/sol/logs/messages/sec_correlate.out.log %timestamp $+{appliance} $+{tag} %s ; \
+       );
+
+
+
+
+#####################################################################################
+##  CACHE UNREGISTERED - SUPPRESSED IF RE-REGISTERED RECEIVED QUICKLY (5 minutes)  ##
+#####################################################################################
+
+# This rule will watch for caches unregistering, and not re-registering.  These must be monitored as the cache will not go into loss.
+# If the cache registers (either on this appliance, or on the mate, which is why we match on cluster) then it cancels the EMIT
+
+# EXAMPLES:
+# 2013-10-20T10:02:40-0400 <local3.info> nykpsol1009n01-admin SOLACLNYKNETUSINFO: VPN: VPN_SOLCACHE_UNREGISTERED: mocha_nyk_prd - Cache Instance (4) mocha_nyk_prd_cl1_r1 unregistered
+# 2013-10-20T21:53:04-0400 <local3.info> nykpsol1009n02-admin SOLACLNYKNETUSINFO: VPN: VPN_SOLCACHE_REGISTERED: mocha_nyk_prd - Cache Instance (4) mocha_nyk_prd_cl1_r1 registered
+
+type=PairWithWindow
+ptype=RegExp
+pattern=(?<appliance>(?<cluster>\S{11})\S*) \S+ VPN: VPN_SOLCACHE_UNREGISTERED: (?<vpn>\S+) - Cache Instance \(\d+\) (?<cachename>\S+)
+context=!WEEKEND_SUPPRESS && !SOLCACHE_FAILOVER_SUPPRESS__$+{cluster}__$+{vpn}__$+{cachename}
+desc=SolCache instance '$+{cachename}' unregistered in VPN '$+{vpn}' on '$+{appliance}'
+action=logonly >> %t >> DETECTED >> %s ; \
+       write /usr/bin/sol/logs/messages/sec_correlate.out.log $0
+ptype2=RegExp
+pattern2=$+{cluster}\S* \S+ VPN: VPN_SOLCACHE_REGISTERED: $+{vpn} - Cache Instance \(\d+\) $+{cachename}
+desc2=Cache instance '%+{cachename}' VPN '%+{vpn}' on '%+{appliance}' re-registered within 60 seconds
+action2=logonly >> %t >> SUPPRESSING >> %s
+window=300
+
+
+# During a failover, it's very likely the cache will register on the backup before unregistering on the primary
+# This will track unknown registers, and create a 'supress' event so that when the unregister happens on the primary, it won't match the above rule
+type=Single
+ptype=RegExp
+pattern=(?<appliance>(?<cluster>\S{11})\S*) \S+ VPN: VPN_SOLCACHE_REGISTERED: (?<vpn>\S+) - Cache Instance \(\d+\) (?<cachename>\S+)
+desc=Cache instance '$+{cachename}' VPN '$+{vpn}' on '$+{appliance}' registered with no unregister
+action=create SOLCACHE_FAILOVER_SUPPRESS__$+{cluster}__$+{vpn}__$+{cachename} 60
+
+
+
+
