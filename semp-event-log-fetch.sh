@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 # Aaron's Super Fantastic Solace event.log retriever using SEMPv1
 #
 # Copyright 2021 Solace Corporation. All rights reserved.
@@ -38,6 +40,10 @@ SEMP="<rpc><show><log><event><lines/><num-lines>$LINES_TO_SHOW</num-lines><find/
 # magic time..!
 curl -u $USERNAME:$PASSWORD "$HOST/SEMP" -d "$SEMP" -s | grep log-entry | perl -pe ' s|\s*</?log-entry>||g; s/&lt;/</g; s/&gt;/>/g; '
 
+if [ ${PIPESTATUS[0]} -ne 0 ]
+then 
+  echo "Something went wrong with curl, check your params again" >&2 
+fi
 
 
 # if you just want a simple one-liner to copy/paste, with no output manipulation, here you go:
