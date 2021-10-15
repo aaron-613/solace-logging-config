@@ -2,7 +2,7 @@
 # will keep appliance logs blah blah description
 # new comment
 
-/var/log/solace*/router*/command.log {
+/var/log/solace*/*/command.log {
         size=50M
 #        rotate 5
         rotate 2
@@ -16,7 +16,7 @@
           /bin/killall -HUP syslog-ng
         endscript
 }
-/var/log/solace*/router*/event.log {
+/var/log/solace*/*/event.log {
         size=100M
 #        rotate 10
         rotate 2
@@ -30,7 +30,7 @@
           /bin/killall -HUP syslog-ng
         endscript
 }
-/var/log/solace*/router*/system.log {
+/var/log/solace*/*/system.log {
         size=50M
         rotate 3
         missingok
@@ -43,7 +43,7 @@
           /bin/killall -HUP syslog-ng
         endscript
 }
-/var/log/solace*/router*/auth.log {
+/var/log/solace*/*/auth.log {
         size=10M
         rotate 3
         missingok
@@ -56,7 +56,7 @@
           /bin/killall -HUP syslog-ng
         endscript
 }
-/var/log/solace*/router*/show.log {
+/var/log/solace*/*/show.log {
         size=10M
         rotate 3
         missingok
@@ -69,7 +69,8 @@
           /bin/killall -HUP syslog-ng
         endscript
 }
-/var/log/solace*/router*/vpn*/event.log {
+# Message-VPN-specific logs, if required
+/var/log/solace*/*/*/event.log {
         size=5M
         rotate 3
         missingok
@@ -82,6 +83,7 @@
           /bin/killall -HUP syslog-ng
         endscript
 }
+# across all brokers, where logs of interest for monitoring applications go
 /var/log/solace*/alerts.log {
         size=20M
         rotate 2
