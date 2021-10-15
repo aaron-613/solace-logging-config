@@ -1,15 +1,15 @@
-This crontab entry determines how often the logs are checked to see if they need rotating,
-with sizes and such determined in the logrotate file.
-
-Use 'crontab -e' as root, and enter one of these lines as appopriate.
-
-This will check every 2 minutes... probably every 5 minutes is good enough.
-Update the various filenames if necessary.
+# This crontab entry determines how often the logs are checked to see if they need rotating,
+# with sizes and such determined in the logrotate file.
+#
+# Use 'crontab -e' as root, and enter one of these lines as appopriate.
+#
+# This will check every 2 minutes... probably every 5 minutes is good enough.
+# Update the various filenames if necessary.
 
 
 */2 * * * * /usr/sbin/logrotate /etc/logrotate.d/solace_logrotate
 
- -- or --
+# -- or --
 
 */2 * * * * /sbin/logrotate /etc/logrotate.d/solace_logrotate
 
