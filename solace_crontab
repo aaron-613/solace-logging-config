@@ -5,7 +5,7 @@
 #  ** OR ** copy this file into /etc/cron.d/
 #
 # This will check every 2 minutes... probably every 5 minutes is good enough.
-# Update the various filenames if necessary.
+# Update the various filenames/paths if necessary.
 
 
 */2 * * * * /usr/sbin/logrotate /etc/logrotate.d/solace_logrotate

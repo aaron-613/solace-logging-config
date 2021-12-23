@@ -6,8 +6,7 @@
 #############################################
 # global options at the top
 
-# IMPORTANT!!  Make sure your username and group matches whatever rsyslog or syslog-ng or whoever is creating the log files, so start the logging and check those out
-# otherwise it'll make them root
+# IMPORTANT!!  Make sure your username and group matches whatever rsyslog or syslog-ng or whoever is creating the log files, otherwise it'll make them root
 # and definitely 644 so other (regular) users can still see these files
 create 644 syslog adm
 #create 644 root root
@@ -24,7 +23,7 @@ delaycompress
 # do it only once after all rotates, not once per file
 sharedscripts
 
-# at the end of all rotates, cause the syslog processes to reattach to the new log files
+# at the end of all rotates, send a sighup to syslog processes to tell them to reattach to the new log files (otherwise they'll keep writing to the renamed .1 file)
 postrotate
 # MAKE SURE THE PATHS ARE CORRECT AND EXIST!
   /usr/bin/killall -HUP rsyslogd
