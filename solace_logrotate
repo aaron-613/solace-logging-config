@@ -6,7 +6,7 @@
 #############################################
 # global options at the top
 
-# IMPORTANT!!  Make sure your username and group matches whatever rsyslog or syslog-ng or whoever is matching
+# IMPORTANT!!  Make sure your username and group matches whatever rsyslog or syslog-ng or whoever is creating the log files, so start the logging and check those out
 # otherwise it'll make them root
 # and definitely 644 so other (regular) users can still see these files
 create 644 syslog adm
@@ -26,8 +26,12 @@ sharedscripts
 
 # at the end of all rotates, cause the syslog processes to reattach to the new log files
 postrotate
-  killall -HUP rsyslogd
-  killall -HUP syslog-ng
+# MAKE SURE THE PATHS ARE CORRECT AND EXIST!
+  /usr/bin/killall -HUP rsyslogd
+  /usr/bin/killall -HUP syslog-ng
+#  ** OR **
+  #/bin/killall -HUP rsyslogd
+  #/bin/killall -HUP syslog-ng
 endscript
 #############################################
 
