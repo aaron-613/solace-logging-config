@@ -2,98 +2,65 @@
 # will keep appliance logs blah blah description
 # new comment
 
+
+#############################################
+# global options at the top
+
+# IMPORTANT!!  Make sure your username and group matches whatever rsyslog or syslog-ng or whoever is matching
+# otherwise it'll make them root
+# and definitely 644 so other (regular) users can still see these files
+create 644 syslog adm
+#create 644 root root
+
+# doesn't matter if there's some missing files for some reason
+missingok
+
+# compress the old log files
+compress
+
+# leave the ".1" file as uncompressed for easy searching
+delaycompress
+
+# do it only once after all rotates, not once per file
+sharedscripts
+
+# at the end of all rotates, cause the syslog processes to reattach to the new log files
+postrotate
+  killall -HUP rsyslogd
+  killall -HUP syslog-ng
+endscript
+#############################################
+
+
 /var/log/solace*/*/command.log {
         size=50M
-#        rotate 5
-        rotate 2
-        missingok
-        compress
-        delaycompress
-        create 644 root root
-        sharedscripts
-        postrotate
-          /bin/killall -HUP rsyslogd
-          /bin/killall -HUP syslog-ng
-        endscript
+        rotate 5
+#        rotate 2
 }
 /var/log/solace*/*/event.log {
         size=100M
-#        rotate 10
-        rotate 2
-        missingok
-        compress
-        delaycompress
-        create 644 root root
-        sharedscripts
-        postrotate
-          /bin/killall -HUP rsyslogd
-          /bin/killall -HUP syslog-ng
-        endscript
+        rotate 10
+#        rotate 2
 }
 /var/log/solace*/*/system.log {
         size=50M
         rotate 3
-        missingok
-        compress
-        delaycompress
-        create 644 root root
-        sharedscripts
-        postrotate
-          /bin/killall -HUP rsyslogd
-          /bin/killall -HUP syslog-ng
-        endscript
 }
 /var/log/solace*/*/auth.log {
         size=10M
         rotate 3
-        missingok
-        compress
-        delaycompress
-        create 644 root root
-        sharedscripts
-        postrotate
-          /bin/killall -HUP rsyslogd
-          /bin/killall -HUP syslog-ng
-        endscript
 }
 /var/log/solace*/*/show.log {
         size=10M
         rotate 3
-        missingok
-        compress
-        delaycompress
-        create 644 root root
-        sharedscripts
-        postrotate
-          /bin/killall -HUP rsyslogd
-          /bin/killall -HUP syslog-ng
-        endscript
 }
 # Message-VPN-specific logs, if required
 /var/log/solace*/*/*/event.log {
         size=5M
         rotate 3
-        missingok
-        compress
-        delaycompress
-        create 644 root root
-        sharedscripts
-        postrotate
-          /bin/killall -HUP rsyslogd
-          /bin/killall -HUP syslog-ng
-        endscript
 }
 # across all brokers, where logs of interest for monitoring applications go
 /var/log/solace*/alerts.log {
         size=20M
         rotate 2
-        missingok
-        compress
-        delaycompress
-        create 644 root root
-        sharedscripts
-        postrotate
-          /bin/killall -HUP rsyslogd
-          /bin/killall -HUP syslog-ng
-        endscript
 }
