@@ -53,14 +53,14 @@ Then, we need to configure the Solace broker.
 1. Login to CLI.  Then:
 ```
 enable
-config
-create syslog external
-facility event
-facility command
-facility system
-host <ec2-public-ip>:51400 transport tcp
-exit
-logging command all mode all-cmds
+  config
+    create syslog external
+      facility event
+      facility command
+      facility system
+      host <ec2-public-ip>:51400 transport tcp
+      exit
+    logging command all mode all-cmds
 ```
 
 #### Don't like your hostname?
