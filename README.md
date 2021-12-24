@@ -2,14 +2,41 @@
 
 This is a collection of logging configuration files for use with Solace messaging routers.  Currently includes:
 
-- rsyslog rules
+
+### Logging Rules
+
+- rsyslog rules (RainerScript)
 - syslog-ng rules
 - logstash grok rules (ELK / ElasticSearch)
 
-Also:
+
+### Also include
+
 - logrotate configuration
 - crontab logrotate example
 - (coming soon) SEC (Simple Event Correlator) log correlation rules
+
+
+## QuickStart - AWS
+
+Quickly deploy a logging server for Solace in AWS _for free_!  Using one of the "free-tier" EC2 instances (e.g. t2.micro).
+1. Boot / deploy an EC2 instance with AWS Linux
+    a) Ensure you add security group rules to accept incoming TCP for logging from Solace
+    b) Take note of your EC2 instance Public IP address, we'll need this later
+1. Login to EC2 instance using your generated key: `ssh -i <keyfile> ec2-user@<pubic-ip-addr>`
+1. Clone or download this repo:
+```
+git clone https://github.com/aaron-613/solace-logging-config.git
+ ** OR **
+wget https://github.com/aaron-613/solace-logging-config/archive/master.zip -q; unzip master.zip; rm master.zip
+```
+1. Use the rsyslog rules, since rsyslog is already installed and running in AWS Linux. Copy, or better yet link, the rules into the right directory: `ln solace_rsyslog.conf /etc/rsyslog.d/`
+1. Restart rsyslog: `sudo systemctl restart rsyslog`
+
+Then, we need to configure the Solace broker.
+
+
+## Supplied Functionality
 
 The rules configurations do basically the same thing:
 
