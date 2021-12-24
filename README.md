@@ -20,16 +20,17 @@ This is a collection of logging configuration files for use with Solace messagin
 ## QuickStart - AWS
 
 Quickly deploy a logging server for Solace in AWS **_for free_**!  Using one of the "free-tier" EC2 instances (e.g. t2.micro).
-1. Boot / deploy an EC2 instance with AWS Linux
-    a) Ensure you add security group rules to accept incoming TCP for logging from Solace
-    b) Take note of your EC2 instance Public IP address, we'll need this later
+1. Boot / deploy an EC2 instance with Amazon Linux 2 AMI (HVM)
+_a) Edit the security group rules: add a TCP Custom rule for ports 51400-51422, from any Source: 0.0.0.0/0
+_b) Once it's launched, take note of your EC2 instance Public IP address, we'll need this later
 1. Login to EC2 instance using your generated key: `ssh -i <keyfile> ec2-user@<pubic-ip-addr>`
-1. Clone or download this repo:```
+1. Clone or download this repo:
+```
 git clone https://github.com/aaron-613/solace-logging-config.git
  ** OR **
 wget https://github.com/aaron-613/solace-logging-config/archive/master.zip -q; unzip master.zip; rm master.zip
 ```
-1. Use the rsyslog rules, since rsyslog is already installed and running in AWS Linux. Copy, or better yet link, the rules into the right directory: `ln solace_rsyslog.conf /etc/rsyslog.d/`
+4. Use the rsyslog rules, since rsyslog is already installed and running in AWS Linux. Copy, or better yet link, the rules into the right directory: `ln solace_rsyslog.conf /etc/rsyslog.d/`
 1. Restart rsyslog: `sudo systemctl restart rsyslog`
 
 Then, we need to configure the Solace broker.
