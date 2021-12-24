@@ -10,7 +10,7 @@ This is a collection of logging configuration files for use with Solace messagin
 - logstash grok rules (ELK / ElasticSearch)
 
 
-### Also include
+### Also includes:
 
 - logrotate configuration
 - crontab logrotate example
@@ -20,17 +20,33 @@ This is a collection of logging configuration files for use with Solace messagin
 ## QuickStart - AWS & rsyslog
 
 Quickly deploy a logging server for Solace in AWS **_for free_**!  Using one of the "free-tier" EC2 instances (e.g. t2.micro).
-1. Boot / deploy an EC2 instance with Amazon Linux 2 AMI (HVM)
+
+### Logging server
+
+1. Boot / deploy an EC2 instance with Amazon Linux 2 AMI (HVM), t2.micro
      1. Edit the security group rules: add a TCP Custom rule for ports 51400-51422, from any Source: 0.0.0.0/0
      1. Once it's launched, take note of your EC2 instance Public IP address, we'll need this later
 1. Login to EC2 instance using your generated key: `ssh -i <keyfile> ec2-user@<pubic-ip-addr>`
      1. Probably best practice to do a `sudo yum update` and `sudo yum upgrade` 
 1. Git clone this repo, or just download and unzip: `wget https://github.com/aaron-613/solace-logging-config/archive/master.zip -q; unzip master.zip; rm master.zip`
 1. `cd solace-logging-config-master`
-2. Copy or symlink the rules file: `sudo ln solace_rsyslog.conf /etc/rsyslog.d/`
+1. Copy or symlink the rules file: `sudo ln solace_rsyslog.conf /etc/rsyslog.d/`
 1. Restart rsyslog: `sudo systemctl restart rsyslog`
 
+### Solace broker config
+
 Then, we need to configure the Solace broker.
+
+#### Solace Cloud
+
+1. Login to Solace Cloud, Mission Control, Cluster Manager
+1. Select the broker / service you wish to add logging to, click on "Manage"
+1. Click on "Advanced Options" (top-right), "Syslog Forwarding": "Add"
+    1. Give it a name (e.g. "external")
+    2. Select all the Logs to forward
+    3. Syslog Server hostname: enter the Public IP address from EC2 instance
+    4. Port: 51400
+    5. Protocol Type: TCCP
 
 
 ## Supplied Functionality
