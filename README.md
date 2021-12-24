@@ -30,7 +30,7 @@ Quickly deploy a logging server for Solace in AWS **_for free_**!  Using one of 
      1. Probably best practice to do a `sudo yum update` and `sudo yum upgrade` 
 1. Git clone this repo, or just download and unzip: `wget https://github.com/aaron-613/solace-logging-config/archive/master.zip -q; unzip master.zip; rm master.zip`
 1. `cd solace-logging-config-master`
-1. Copy or symlink the rules file: `sudo ln solace_rsyslog.conf /etc/rsyslog.d/`
+1. Copy or symlink the rules file to /etc/rsyslog.d/: `sudo ln solace_rsyslog.conf /etc/rsyslog.d/`
 1. Restart rsyslog: `sudo systemctl restart rsyslog`
 
 ### Solace broker config
