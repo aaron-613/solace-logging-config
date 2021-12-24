@@ -63,7 +63,7 @@ enable
     logging command all mode all-cmds
 ```
 
-#### Don't like your hostname?
+### 3. Don't like your hostname?
 
 Sometimes with Solace CLoud, you'll get weird random-looking hostnames (e.g. `ip-172-25-199-45`), so you should maybe consider making a softlink to a folder name you like better:
 ```
