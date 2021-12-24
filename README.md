@@ -100,8 +100,8 @@ be watched by a monitoring program, rather than having the monitoring program tr
 Make sure your logs don't take up all your disk space!  There are some included files to make sure you rotate your log files, and check them periodically.
 
 - Copy the `solace_logrorate` file into your `/etc/logrotate.d/` directory
-- Copy the `solace_crontag` file into `/etc/cron.d` directory
-   - Or edit your crontab (`crontab -e`) and included the one-line in there
+- Copy the `solace_crontab` file into `/etc/cron.d` directory
+   - Or edit your crontab (`crontab -e`) and included the one-liner in there
  
 *Make sure you edit/verify the paths, as specified in the files
 
