@@ -15,6 +15,7 @@ This is a collection of logging configuration files made by Aaron for use with S
 - logrotate configuration
 - crontab logrotate example
 - (coming eventually) SEC (Simple Event Correlator) log correlation rules
+- useful SEMP tool to grab logs remotely w/out Syslog config
 
 
 ## QuickStart - AWS & rsyslog
