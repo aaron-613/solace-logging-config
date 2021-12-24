@@ -1,6 +1,6 @@
 # solace-logging-config
 
-This is a collection of logging configuration files for use with Solace messaging routers.  Currently includes:
+This is a collection of logging configuration files made by Aaron for use with Solace messaging routers.  Currently includes:
 
 
 ### Logging Rules
