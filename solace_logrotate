@@ -35,26 +35,33 @@ endscript
 #############################################
 
 
+# all the config changes, good for audit
 /var/log/solace*/*/command.log {
         size=50M
         rotate 5
 #        rotate 2
 }
+
 /var/log/solace*/*/event.log {
         size=100M
         rotate 10
 #        rotate 2
 }
+
 /var/log/solace*/*/system.log {
         size=50M
         rotate 3
 }
+
+# authentication-related logs, broken out
 /var/log/solace*/*/auth.log {
         size=10M
         rotate 3
 }
+
+# all the "show" command logs, if enabled at the broker
 /var/log/solace*/*/show.log {
-        size=10M
+        size=1M
         rotate 3
 }
 # Message-VPN-specific logs, if required

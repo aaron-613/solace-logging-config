@@ -7,10 +7,16 @@
 # This will check every 2 minutes... probably every 5 minutes is good enough.
 # Update the various filenames/paths if necessary.
 
+# some Linux cron files require username (AWS Linux?)
+*/2 * * * * root /usr/sbin/logrotate /etc/logrotate.d/solace_logrotate
 
+#  ** OR **
+
+# some do not (Ubuntu?)
 */2 * * * * /usr/sbin/logrotate /etc/logrotate.d/solace_logrotate
 
 #  ** OR **
 
-#*/2 * * * * /sbin/logrotate /etc/logrotate.d/solace_logrotate
+# different path for logrotate?
+#*/2 * * * * root /sbin/logrotate /etc/logrotate.d/solace_logrotate
 
