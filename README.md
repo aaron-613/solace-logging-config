@@ -72,7 +72,7 @@ ln -s /var/log/solace/ip-172-25-199-45 /var/log/solace/my-better-hostname
 
 ## Supplied Functionality
 
-The rules configurations do basically the same thing:
+The 3 different rules configurations for the different Syslog engines do basically the same thing:
 
 - Listen on 3 different inbound TCP ports, one each for `dev`, `test`, and `prod`, beause that's awesome/advanced!
   - rsyslog: 51400 (dev), 51401 (test), 51402 (prod)
