@@ -75,8 +75,10 @@ ln -s /var/log/solace/ip-172-25-199-45 /var/log/solace/my-better-hostname
 The rules configurations do basically the same thing:
 
 - Listen on 3 different inbound TCP ports, one for dev, test, and prod:
-  - 51400,51401,51402 for rsyslog; 51410,51411,51412 for syslog-ng; 51420,51421,51422 for logstash
-  - This way I could add additional rules/processing later on depending on what port it is
+  - rsyslog: 51400 (dev), 51401 (test), 51402 (prod)
+  - syslog-ng: 51410 (dev), 51411 (test), 51412 (prod)
+  - logstash: 51420 (dev), 51421 (test), 51422 (prod)
+  - This way, I could add additional rules/processing later on depending on what port it is
     - e.g. Don't log VPN Bridge UP/DOWN events to the alerts.log for dev dev environments
   - This assumes a particular Solace router is designated as prod, test, or dev.  Maybe change to prod/non-prod?
 - Ability to process all 3 log facilities arriving from Solace, but does some filtering.  For each router, it creates a directory
