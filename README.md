@@ -1,6 +1,6 @@
 # solace-logging-config
 
-This is a collection of logging configuration files made by Aaron for use with Solace messaging routers.  Currently includes:
+This is a collection of logging configuration files made by Aaron for use with Solace messaging routers via Syslog forwarding.  Currently includes:
 
 
 ### Logging Rules
@@ -74,12 +74,13 @@ ln -s /var/log/solace/ip-172-25-199-45 /var/log/solace/my-better-hostname
 
 The 3 different rules configurations for the different Syslog engines do basically the same thing:
 
-- Listen on 3 different inbound TCP ports, one each for `dev`, `test`, and `prod`, beause that's awesome/advanced!
+- Listen on 3 different inbound TCP ports, one each for `dev`, `test`, and `prod`, because that's awesome/advanced!
   - rsyslog: 51400 (dev), 51401 (test), 51402 (prod)
   - syslog-ng: 51410 (dev), 51411 (test), 51412 (prod)
   - logstash: 51420 (dev), 51421 (test), 51422 (prod)
   - This way, I can add additional rules/processing/filtering later on depending on what port it is
     - e.g. Don't log VPN Bridge UP/DOWN events to the alerts.log for dev dev environments
+    - e.g. Don't alert on SolCache DOWN events in dev if they come back up within 5 minutes
   - This assumes a particular Solace router is designated as prod, test, or dev.  Maybe change to prod/non-prod?
 - Ability to process all 3 log facilities arriving from Solace, but does some filtering.  For each router, it creates a directory
 for it prefixed by `router.`.  Then inside each:
@@ -110,7 +111,7 @@ Make sure your logs don't take up all your disk space!  There are some included 
 This is what a particular router's directory would look like:
 
 ```
-[alee@sg-sol-3501-host router.sg-sol-3501-vmr]$ ls -lh
+[alee@sg-sol-3501-host sg-sol-3501-vmr]$ ls -lh
 total 15M
 -rw-r--r--. 1 root root  77K Apr 19 01:50 auth.log
 -rw-r--r--. 1 root root 9.7M Apr 19 00:55 command.log
@@ -123,5 +124,5 @@ total 15M
 drwxr-xr-x. 2 root root   23 Apr 18 19:47 vpn.bw
 drwxr-xr-x. 2 root root   23 Apr 18 19:47 vpn.default
 drwxr-xr-x. 2 root root   23 Apr 19 00:46 vpn.rest
-[alee@sg-sol-3501-host router.sg-sol-3501-vmr]$
+[alee@sg-sol-3501-host sg-sol-3501-vmr]$
 ```
