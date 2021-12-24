@@ -48,6 +48,27 @@ Then, we need to configure the Solace broker.
     4. Port: 51400
     5. Protocol Type: TCCP
 
+#### Solace Broker
+
+1. Login to CLI.  Then:
+```
+enable
+config
+create syslog external
+facility event
+facility command
+facility system
+host <ec2-public-ip>:51400 transport tcp
+exit
+logging command all mode all-cmds
+```
+
+#### Don't like your hostname?
+
+Sometimes with Solace CLoud, you'll get weird random-looking hostnames (e.g. `ip-172-25-199-45`), so you should maybe consider making a softlink to a folder name you like better:
+```
+ln -s /var/log/solace/ip-172-25-199-45 /var/log/solace/my-better-hostname
+```
 
 ## Supplied Functionality
 
