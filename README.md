@@ -127,3 +127,10 @@ drwxr-xr-x. 2 root root   23 Apr 18 19:47 default
 drwxr-xr-x. 2 root root   23 Apr 19 00:46 rest
 [alee@sg-sol-3501-host sg-sol-3501-vmr]$
 ```
+
+
+## Syslog-NG
+
+On AWS Linux, you'll need to install EPEL (extrams): `sudo amazon-linux-extras install epel -y`
+
+Then you can copy the syslog_ng conf file into `/etc/syslog-ng/conf.d` --or-- replace `/etc/syslog-ng/syslog-ng.conf`.
