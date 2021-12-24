@@ -59,7 +59,7 @@ endscript
         rotate 3
 }
 
-# all the "show" command logs, if enabled at the broker
+# all the "show" command logs broken out, if enabled at the broker
 /var/log/solace*/*/show.log {
         size=1M
         rotate 3
