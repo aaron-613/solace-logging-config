@@ -21,10 +21,11 @@ This is a collection of logging configuration files for use with Solace messagin
 
 Quickly deploy a logging server for Solace in AWS **_for free_**!  Using one of the "free-tier" EC2 instances (e.g. t2.micro).
 1. Boot / deploy an EC2 instance with Amazon Linux 2 AMI (HVM)
-      1. Edit the security group rules: add a TCP Custom rule for ports 51400-51422, from any Source: 0.0.0.0/0
-      1. Once it's launched, take note of your EC2 instance Public IP address, we'll need this later
+     1. Edit the security group rules: add a TCP Custom rule for ports 51400-51422, from any Source: 0.0.0.0/0
+     1. Once it's launched, take note of your EC2 instance Public IP address, we'll need this later
 1. Login to EC2 instance using your generated key: `ssh -i <keyfile> ec2-user@<pubic-ip-addr>`
-1. Clone or download this repo:
+     1. Probably best practice to do a `sudo yum update` and `sudo yum upgrade` 
+3. Clone or download this repo:
 ```
 git clone https://github.com/aaron-613/solace-logging-config.git
  ** OR **
