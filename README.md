@@ -29,8 +29,8 @@ Quickly deploy a logging server for Solace in AWS **_for free_**!  Using one of 
      1. Once it's launched, take note of your EC2 instance Public IP address, we'll need this later
 1. Login to EC2 instance using your generated key: `ssh -i <keyfile> ec2-user@<pubic-ip-addr>`
      1. Probably best practice to do a `sudo yum update` and `sudo yum upgrade` 
-1. Download and unzip this repo: `wget https://github.com/aaron-613/solace-logging-config/archive/master.zip -q`
-1. `unzip master.zip; rm master.zip; cd solace-logging-config-master`
+1. Download this repo: `wget https://github.com/aaron-613/solace-logging-config/archive/master.zip -q`
+1. Unzip it: `unzip master.zip; rm master.zip; cd solace-logging-config-master`
 1. Copy (or symlink?) rules file to /etc/rsyslog.d/: `sudo cp solace_rsyslog.conf /etc/rsyslog.d/`
 1. Restart rsyslog: `sudo systemctl restart rsyslog`
 
@@ -122,8 +122,8 @@ total 15M
 -rw-r--r--. 1 root root 2.2K Apr 19 01:06 show.log.2.gz
 -rw-r--r--. 1 root root 2.2K Apr 19 01:04 show.log.3.gz
 -rw-r--r--. 1 root root  22K Apr 19 00:55 system.log
-drwxr-xr-x. 2 root root   23 Apr 18 19:47 vpn.bw
-drwxr-xr-x. 2 root root   23 Apr 18 19:47 vpn.default
-drwxr-xr-x. 2 root root   23 Apr 19 00:46 vpn.rest
+drwxr-xr-x. 2 root root   23 Apr 18 19:47 bw
+drwxr-xr-x. 2 root root   23 Apr 18 19:47 default
+drwxr-xr-x. 2 root root   23 Apr 19 00:46 rest
 [alee@sg-sol-3501-host sg-sol-3501-vmr]$
 ```
