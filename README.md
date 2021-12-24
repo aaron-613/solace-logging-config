@@ -103,7 +103,7 @@ Make sure your logs don't take up all your disk space!  There are some included 
 - Copy the `solace_crontag` file into `/etc/cron.d` directory
    - Or edit your crontab (`crontab -e`) and included the one-line in there
  
-* Make sure you edit/verify the paths, as specified in the files
+*Make sure you edit/verify the paths, as specified in the files
 
 ## Directory contents
 
