@@ -17,7 +17,7 @@ This is a collection of logging configuration files for use with Solace messagin
 - (coming eventually) SEC (Simple Event Correlator) log correlation rules
 
 
-## QuickStart - AWS
+## QuickStart - AWS & rsyslog
 
 Quickly deploy a logging server for Solace in AWS **_for free_**!  Using one of the "free-tier" EC2 instances (e.g. t2.micro).
 1. Boot / deploy an EC2 instance with Amazon Linux 2 AMI (HVM)
@@ -25,13 +25,9 @@ Quickly deploy a logging server for Solace in AWS **_for free_**!  Using one of 
      1. Once it's launched, take note of your EC2 instance Public IP address, we'll need this later
 1. Login to EC2 instance using your generated key: `ssh -i <keyfile> ec2-user@<pubic-ip-addr>`
      1. Probably best practice to do a `sudo yum update` and `sudo yum upgrade` 
-3. Clone or download this repo:
-```
-git clone https://github.com/aaron-613/solace-logging-config.git
- ** OR **
-wget https://github.com/aaron-613/solace-logging-config/archive/master.zip -q; unzip master.zip; rm master.zip
-```
-4. Use the rsyslog rules, since rsyslog is already installed and running in AWS Linux. Copy, or better yet link, the rules into the right directory: `ln solace_rsyslog.conf /etc/rsyslog.d/`
+1. Git clone this repo, or just download and unzip: `wget https://github.com/aaron-613/solace-logging-config/archive/master.zip -q; unzip master.zip; rm master.zip`
+1. `cd solace-logging-config-master`
+2. Copy or symlink the rules file: `sudo ln solace_rsyslog.conf /etc/rsyslog.d/`
 1. Restart rsyslog: `sudo systemctl restart rsyslog`
 
 Then, we need to configure the Solace broker.
