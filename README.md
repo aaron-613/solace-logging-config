@@ -64,7 +64,11 @@ enable
     logging command all mode all-cmds
 ```
 
-### 3. Don't like your hostname?
+### 3. See the results!
+
+On your logging server, head over to `/var/log/solace`, and you should start to see logs being populated there.  Try connecting a client app or something to your broker, and you should see that echo'ed in realtime to the `event.log`.
+
+#### Don't like your hostname?
 
 Sometimes with Solace CLoud, you'll get weird random-looking hostnames (e.g. `ip-172-25-199-45`), so you should maybe consider making a softlink to a folder name you like better:
 ```
