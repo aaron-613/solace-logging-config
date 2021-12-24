@@ -21,7 +21,7 @@ This is a collection of logging configuration files for use with Solace messagin
 
 Quickly deploy a logging server for Solace in AWS **_for free_**!  Using one of the "free-tier" EC2 instances (e.g. t2.micro).
 
-### Logging server
+### 1. Logging server
 
 1. Boot / deploy an EC2 instance with Amazon Linux 2 AMI (HVM), t2.micro
      1. Edit the security group rules: add a TCP Custom rule for ports 51400-51422, from any Source: 0.0.0.0/0
@@ -33,7 +33,7 @@ Quickly deploy a logging server for Solace in AWS **_for free_**!  Using one of 
 1. Copy or symlink the rules file to /etc/rsyslog.d/: `sudo ln solace_rsyslog.conf /etc/rsyslog.d/`
 1. Restart rsyslog: `sudo systemctl restart rsyslog`
 
-### Solace broker config
+### 2. Solace broker config
 
 Then, we need to configure the Solace broker.
 
