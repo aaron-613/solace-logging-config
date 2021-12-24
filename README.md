@@ -66,11 +66,34 @@ enable
 
 ### 3. See the results!
 
-On your logging server, head over to `/var/log/solace`, and you should start to see logs being populated there.  Try connecting a client app or something to your broker, and you should see that echo'ed in realtime to the `event.log`.
+On your logging server, head over to `/var/log/solace`, and you should start to see logs being populated there.  Try connecting a client app or something to your broker, and you should see that echoed in realtime to the `event.log`.
 
-#### Don't like your hostname?
 
-Sometimes with Solace CLoud, you'll get weird random-looking hostnames (e.g. `ip-172-25-199-45`), so you should maybe consider making a softlink to a folder name you like better:
+```
+[ec2-user@ip-172-31-39-85 ~]$ cd /var/log/solace
+[ec2-user@ip-172-31-39-85 solace]$ ls
+sg-sol-3501-vmr  ip-172-25-199-45
+[ec2-user@ip-172-31-39-85 solace]$ cd sg-sol-3501-vmr
+[ec2-user@ip-172-31-39-85 sg-sol-3501-vmr]$ ls -lh
+total 15M
+-rw-r--r--. 1 root root  77K Apr 19 01:50 auth.log
+-rw-r--r--. 1 root root 9.7M Apr 19 00:55 command.log
+-rw-r--r--. 1 root root 3.1M Apr 19 01:50 event.log
+-rw-r--r--. 1 root root  79K Apr 19 01:51 show.log
+-rw-r--r--. 1 root root 1.1M Apr 19 01:48 show.log.1
+-rw-r--r--. 1 root root 2.2K Apr 19 01:06 show.log.2.gz
+-rw-r--r--. 1 root root 2.2K Apr 19 01:04 show.log.3.gz
+-rw-r--r--. 1 root root  22K Apr 19 00:55 system.log
+drwxr-xr-x. 2 root root   23 Apr 18 19:47 bw
+drwxr-xr-x. 2 root root   23 Apr 18 19:47 default
+drwxr-xr-x. 2 root root   23 Apr 19 00:46 rest
+[ec2-user@ip-172-31-39-85 sg-sol-3501-vmr]$
+```
+
+
+#### Don't like your Solace broker hostname?
+
+Sometimes with Solace Cloud, you'll get weird random-looking hostnames (e.g. `ip-172-25-199-45`), so you should maybe consider making a softlink to a folder name you like better:
 ```
 ln -s /var/log/solace/ip-172-25-199-45 /var/log/solace/my-better-hostname
 ```
@@ -111,26 +134,6 @@ Make sure your logs don't take up all your disk space!  There are some included 
  
 *Make sure you edit/verify the paths, as specified in the files
 
-## Directory contents
-
-This is what a particular router's directory would look like:
-
-```
-[alee@sg-sol-3501-host sg-sol-3501-vmr]$ ls -lh
-total 15M
--rw-r--r--. 1 root root  77K Apr 19 01:50 auth.log
--rw-r--r--. 1 root root 9.7M Apr 19 00:55 command.log
--rw-r--r--. 1 root root 3.1M Apr 19 01:50 event.log
--rw-r--r--. 1 root root  79K Apr 19 01:51 show.log
--rw-r--r--. 1 root root 1.1M Apr 19 01:48 show.log.1
--rw-r--r--. 1 root root 2.2K Apr 19 01:06 show.log.2.gz
--rw-r--r--. 1 root root 2.2K Apr 19 01:04 show.log.3.gz
--rw-r--r--. 1 root root  22K Apr 19 00:55 system.log
-drwxr-xr-x. 2 root root   23 Apr 18 19:47 bw
-drwxr-xr-x. 2 root root   23 Apr 18 19:47 default
-drwxr-xr-x. 2 root root   23 Apr 19 00:46 rest
-[alee@sg-sol-3501-host sg-sol-3501-vmr]$
-```
 
 
 ## Syslog-NG
