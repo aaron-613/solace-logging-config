@@ -134,3 +134,7 @@ drwxr-xr-x. 2 root root   23 Apr 19 00:46 rest
 On AWS Linux, you'll need to install EPEL (extrams): `sudo amazon-linux-extras install epel -y`
 
 Then you can copy the syslog_ng conf file into `/etc/syslog-ng/conf.d` --or-- replace `/etc/syslog-ng/syslog-ng.conf`.
+
+## Logstash
+
+https://www.elastic.co/guide/en/logstash/current/installing-logstash.html
