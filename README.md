@@ -71,9 +71,12 @@ On your logging server, head over to `/var/log/solace`, and you should start to 
 
 ```
 [ec2-user@ip-172-31-39-85 ~]$ cd /var/log/solace
+
 [ec2-user@ip-172-31-39-85 solace]$ ls
 sg-sol-3501-vmr  ip-172-25-199-45
+
 [ec2-user@ip-172-31-39-85 solace]$ cd sg-sol-3501-vmr
+
 [ec2-user@ip-172-31-39-85 sg-sol-3501-vmr]$ ls -lh
 total 15M
 -rw-r--r--. 1 root root  77K Apr 19 01:50 auth.log
@@ -87,6 +90,7 @@ total 15M
 drwxr-xr-x. 2 root root   23 Apr 18 19:47 bw
 drwxr-xr-x. 2 root root   23 Apr 18 19:47 default
 drwxr-xr-x. 2 root root   23 Apr 19 00:46 rest
+
 [ec2-user@ip-172-31-39-85 sg-sol-3501-vmr]$
 ```
 
