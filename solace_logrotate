@@ -25,14 +25,16 @@ delaycompress
 # do it only once after all rotates, not once per file
 sharedscripts
 
-# at the end of all rotates, send a sighup to syslog processes to tell them to reattach to the new log files (otherwise they'll keep writing to the renamed .1 file)
+# at the end of all rotates, send a SIGHUP to syslog processes to tell them
+# to reattach to the new log files (otherwise they'll keep writing to the
+# renamed .1 file)
 postrotate
 # MAKE SURE THE PATHS ARE CORRECT AND EXIST!  (do a 'which killall' to verify)
   /usr/bin/killall -HUP rsyslogd
   /usr/bin/killall -HUP syslog-ng
 #  ** OR **
-#/bin/killall -HUP rsyslogd
-#/bin/killall -HUP syslog-ng
+#  /bin/killall -HUP rsyslogd
+#  /bin/killall -HUP syslog-ng
 endscript
 #############################################
 
@@ -41,15 +43,15 @@ endscript
 /var/log/solace*/*/command.log {
         size=50M
         rotate 5
-#        rotate 2
 }
 
+# about 1 GB of event logs, same as broker (20x 50MB)
 /var/log/solace*/*/event.log {
         size=100M
         rotate 10
-#        rotate 2
 }
 
+# I think system log is not that useful, due to my fancier alert.log
 /var/log/solace*/*/system.log {
         size=50M
         rotate 3
@@ -66,12 +68,15 @@ endscript
         size=1M
         rotate 3
 }
+
 # Message-VPN-specific logs, if required
+# e.g. /var/log/solace/broker/vpn/event.log
 /var/log/solace*/*/*/event.log {
         size=5M
         rotate 3
 }
-# across all brokers, where logs of interest for monitoring applications go
+
+# across all brokers, event logs of interest for monitoring applications
 /var/log/solace*/alerts.log {
         size=20M
         rotate 2

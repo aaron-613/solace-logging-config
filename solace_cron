@@ -1,5 +1,5 @@
-# This cron determines how often the logs are checked to see if they need rotating,
-# with sizes and such determined in the logrotate file.
+# This cron determines how often the logs are checked to see if they need
+# rotating, with sizes and such determined in the logrotate file.
 #
 # Copy this file into /etc/cron.d/
 #  ** OR ** remove the "root" username below and use 'crontab -e' as root
