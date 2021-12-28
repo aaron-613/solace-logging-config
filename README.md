@@ -91,13 +91,6 @@ drwxr-xr-x. 2 root root   23 Apr 19 00:46 rest
 ```
 
 
-#### Don't like your Solace broker hostname?
-
-Sometimes with Solace Cloud, you'll get weird random-looking hostnames (e.g. `ip-172-25-199-45`), so you should maybe consider making a softlink to a folder name you like better:
-```
-ln -s /var/log/solace/ip-172-25-199-45 /var/log/solace/my-better-hostname
-```
-
 ## Supplied Functionality
 
 The 3 different rules configurations for the different Syslog engines do basically the same thing:
@@ -137,6 +130,8 @@ Make sure your logs don't take up all your disk space!  There are some included 
 
 
 ## Syslog-NG
+
+You might need EPEL installed first.
 
 On AWS Linux, you'll need to install EPEL (extrams): `sudo amazon-linux-extras install epel -y`
 
