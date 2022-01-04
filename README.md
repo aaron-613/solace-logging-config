@@ -1,6 +1,6 @@
 # solace-logging-config
 
-This is a collection of logging configuration files made by Aaron for use with Solace messaging routers via Syslog forwarding.  Currently includes:
+This is a collection of logging configuration files made by Aaron for use with Solace PubSub+ event brokers and Solace Cloud services via Syslog forwarding.  Currently includes:
 
 
 ### Logging Rules
@@ -20,7 +20,7 @@ This is a collection of logging configuration files made by Aaron for use with S
 
 ## QuickStart - AWS & rsyslog
 
-Quickly deploy a logging server for Solace in AWS **_for free_**!  Using one of the "free-tier" EC2 instances (e.g. t2.micro).
+Quickly deploy a logging server for Solace in AWS **_for free_**!  Using one of the "free-tier" EC2 instances (e.g. t2.micro), and the pre-installed rsyslog.
 
 ### 1. Logging server
 

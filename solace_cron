@@ -7,7 +7,10 @@
 # This will check every 2 minutes... probably every 5 minutes is good enough.
 # Update the various filenames/paths if necessary.
 
+# change the username to whoever owns the log files in /var/log/solace (e.g. root or syslog or whoever)
+
 */2 * * * * root /usr/sbin/logrotate /etc/logrotate.d/solace_logrotate
+#*/2 * * * * syslog /usr/sbin/logrotate /etc/logrotate.d/solace_logrotate
 
 #  ** OR **
 
