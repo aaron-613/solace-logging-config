@@ -47,7 +47,7 @@ Then, we need to configure the Solace broker.
     2. Select all the Logs to forward
     3. Syslog Server hostname: enter the Public IP address from EC2 instance
     4. Port: 51400
-    5. Protocol Type: TCCP
+    5. Protocol Type: TCP
 
 #### Solace Broker
 
