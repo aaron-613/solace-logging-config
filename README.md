@@ -139,7 +139,7 @@ You might need EPEL installed first.
 
 On AWS Linux, you'll need to install EPEL (extrams): `sudo amazon-linux-extras install epel -y`
 
-Then you can copy the syslog_ng conf file into `/etc/syslog-ng/conf.d` --or-- replace `/etc/syslog-ng/syslog-ng.conf`.
+Then you can copy the syslog_ng conf file into `/etc/syslog-ng/conf.d` --_or_-- replace `/etc/syslog-ng/syslog-ng.conf`.
 
 ## Logstash
 
