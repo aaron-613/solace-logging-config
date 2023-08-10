@@ -49,7 +49,7 @@ Then, we need to configure the Solace broker.
     4. Port: 51400
     5. Protocol Type: TCP
 
-#### Solace Broker
+#### Self-Managed Solace Broker
 
 1. Login to CLI.  Then:
 ```
